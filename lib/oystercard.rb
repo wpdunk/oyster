@@ -21,6 +21,10 @@ class Oystercard
     @balance -=amount
   end
 
+def in_journey?
+  true
+end
+
 private :add
 
 end

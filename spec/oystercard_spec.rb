@@ -32,4 +32,10 @@ it "can be deducted" do
 end
 end
 
+describe "#in_journey?" do
+  it "returns true / false for journey" do
+    expect(subject.in_journey?).to eq(true)
+  end
+end
+
 end
