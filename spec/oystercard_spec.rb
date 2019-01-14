@@ -14,11 +14,22 @@ describe Oystercard do
     expect(subject.balance).to eq(0)
   end
 
-  it "can be topped up" do
-    expect(subject.topup(10)).to eq(10)
-  end
+  describe "#topup" do
+    it "can be topped up" do
+      expect(subject.topup(10)).to eq(10)
+    end
 
-  it "can raise error max amount exceeded" do
-    expect { subject.topup(100) }.to raise_error "max amount reached"
+    it "can raise error max amount exceeded" do
+      max_topup = Oystercard::MAX_BALANCE
+      subject.topup(max_topup)
+      expect { subject.topup 1 }.to raise_error "max amount reached"
+    end
   end
+describe "#deduct" do
+it "can be deducted" do
+  subject.topup(10)
+  expect(subject.deduct(2)).to eq(8)
+end
+end
+
 end
