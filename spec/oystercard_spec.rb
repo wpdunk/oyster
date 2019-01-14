@@ -29,13 +29,22 @@ describe "#deduct" do
 it "can be deducted" do
   subject.topup(10)
   expect(subject.deduct(2)).to eq(8)
-end
+  end
 end
 
 describe "#in_journey?" do
   it "returns true / false for journey" do
-    expect(subject.in_journey?).to eq(true)
+    expect(subject.in_journey?).to eq(false)
   end
+    it "allows user to touch in" do
+      subject.touch_in
+      expect(subject.in_journey?).to eq(true)
+    end
+
+    it "allows user to touch out" do
+      subject.touch_out
+      expect(subject.in_journey?).to eq(false)
+    end
 end
 
 end
