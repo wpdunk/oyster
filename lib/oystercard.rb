@@ -36,6 +36,7 @@ class Oystercard
 
   def touch_out
     @travelling = false
+    deduct(MIN_BALANCE)
   end
 
   # def in_journey?
@@ -50,6 +51,6 @@ class Oystercard
   #   @journey = false
   # end
 
-private :add
+private :add, :deduct
 
 end

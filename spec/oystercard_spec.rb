@@ -26,12 +26,7 @@ describe Oystercard do
     end
   end
 
-  describe "#deduct" do
-  it "can be deducted" do
-    subject.topup(10)
-    expect(subject.deduct(2)).to eq(8)
-    end
-  end
+
 
   describe "#journey?" do
 
@@ -60,7 +55,9 @@ describe Oystercard do
     end
   end
 
-
-
-
+  describe "#touch_out" do
+    it "reduces balance by correct amount" do
+        expect {subject.touch_out}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
+    end
+  end
 end
