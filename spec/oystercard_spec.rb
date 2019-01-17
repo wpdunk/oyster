@@ -37,16 +37,16 @@ describe Oystercard do
     end
 
     it 'is initially not in a journey' do
-      expect(subject).not_to be_travelling
+      expect(subject.journey).not_to be_travelling
     end
 
     it "can touch in" do
-      expect(@card).to be_travelling
+      expect(@card.journey).to be_travelling
     end
 
     it "can touch out" do
       @card.touch_out(exit_station)
-      expect(@card).not_to be_travelling
+      expect(@card.journey).not_to be_travelling
     end
 
   end
@@ -56,11 +56,10 @@ describe Oystercard do
       expect { subject.touch_in(entry_station) }.to raise_error "balance too low"
     end
 
-    it "stores the entry station in journey_list" do
+    it "stores the entry station in journey.journey.journey_list" do
       subject.topup(Oystercard::MIN_BALANCE)
       subject.touch_in(entry_station)
-      # expect(subject.journey_list.fetch(:entries).pop).to eq (station)
-      expect(subject.journey_list[-1][:entry_station]).to eq entry_station
+      expect(subject.journey.journey_list[-1][:entry_station]).to eq entry_station
     end
   end
 
@@ -71,13 +70,6 @@ describe Oystercard do
         expect {subject.touch_out(exit_station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
     end
 
-    it "forgets the last station" do
-      subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to eq nil
-    end
-
     it "takes an exit station" do
       expect(subject).to respond_to(:touch_out).with(1)
     end
@@ -86,21 +78,21 @@ describe Oystercard do
       subject.topup(Oystercard::MIN_BALANCE)
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
-      expect(subject.journey_list[-1][:exit_station]).to eq exit_station
+      expect(subject.journey.journey_list[-1][:exit_station]).to eq exit_station
     end
   end
 
-  describe '::journey_list' do
+  describe '::journey.journey_list' do
 
     it 'has an empty list of journeys by default' do
-      expect(subject.journey_list).to be_empty
+      expect(subject.journey.journey_list).to be_empty
     end
 
     it 'stores a journey' do
       subject.topup(Oystercard::MIN_BALANCE)
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
-      expect(subject.journey_list).to include journey
+      expect(subject.journey.journey_list).to include journey
     end
 
   end
