@@ -3,11 +3,10 @@ require 'oystercard'
 
 describe Oystercard do
 
-  let(:station){ double :station }
+  let(:entry_station) { double :station }
+  let(:exit_station) { double :station }
+  let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
-  before(:each) do
-    @amount = double("amount")
-  end
 
   it "has a balance" do
     expect(subject).to respond_to(:balance)
@@ -31,50 +30,87 @@ describe Oystercard do
 
   describe "#journey?" do
 
+    before(:each) do
+      @card = Oystercard.new
+      @card.topup(Oystercard::MIN_BALANCE)
+      @card.touch_in(entry_station)
+    end
+
     it 'is initially not in a journey' do
       expect(subject).not_to be_travelling
     end
 
     it "can touch in" do
-      subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect(subject).to be_travelling
+      expect(@card).to be_travelling
     end
 
     it "can touch out" do
-      subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(station)
-      subject.touch_out
-      expect(subject).not_to be_travelling
+      @card.touch_out(exit_station)
+      expect(@card).not_to be_travelling
     end
 
   end
 
   describe "#touch_in" do
-
     it "checks balance is above min amount" do
-      expect { subject.touch_in(station) }.to raise_error "balance too low"
+      expect { subject.touch_in(entry_station) }.to raise_error "balance too low"
     end
 
     it "can remember the last station" do
       subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect(subject.entry_station).to eq station
+      subject.touch_in(entry_station)
+      expect(subject.entry_station).to eq entry_station
+    end
+
+    it "stores the entry station in journey_list" do
+      subject.topup(Oystercard::MIN_BALANCE)
+      subject.touch_in(exit_station)
+      # expect(subject.journey_list.fetch(:entries).pop).to eq (station)
+      expect(subject.entry_station).to eq exit_station
     end
   end
 
   describe "#touch_out" do
     it "reduces balance by correct amount" do
-        expect {subject.touch_out}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
+        subject.topup(Oystercard::MIN_BALANCE)
+        subject.touch_in(entry_station)
+        expect {subject.touch_out(exit_station)}.to change{subject.balance}.by(-Oystercard::MIN_BALANCE)
     end
 
     it "forgets the last station" do
       subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(station)
-      subject.touch_out
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
       expect(subject.entry_station).to eq nil
     end
+
+    it "takes an exit station" do
+      expect(subject).to respond_to(:touch_out).with(1)
+    end
+
+    it 'stores exit station' do
+      subject.topup(Oystercard::MIN_BALANCE)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.exit_station).to eq exit_station
+    end
   end
+
+  describe '::journey_list' do
+
+    it 'has an empty list of journeys by default' do
+      expect(subject.journey_list).to be_empty
+    end
+
+    it 'stores a journey' do
+      subject.topup(Oystercard::MIN_BALANCE)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.journey_list).to include journey
+    end
+
+  end
+
 
 
 
