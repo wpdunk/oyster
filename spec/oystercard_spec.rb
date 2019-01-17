@@ -27,7 +27,9 @@ describe Oystercard do
       expect { subject.topup 1 }.to raise_error "max amount reached"
     end
   end
-
+  describe "#fare" do
+  it {is_expected.to respond_to(:fare)}
+  end
   describe "#journey?" do
 
     before(:each) do

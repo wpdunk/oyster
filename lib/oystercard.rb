@@ -24,20 +24,26 @@ class Oystercard
     @balance -=amount
   end
 
-  def touch_in(station)
+  def fare()
+    if @journey.travelling? == false
+      return PENALTY_CHARGE
+    else
+      return MIN_BALANCE
+    end
+  end
+
+  def touch_in (station)
     fail "balance too low" if @balance < MIN_BALANCE
     deduct(PENALTY_CHARGE) if @journey.travelling?
     @journey.start_journey(station)
   end
 
   def touch_out(station)
-     if @journey.travelling? == false
-       deduct(PENALTY_CHARGE)
-     else
-       @journey.end_journey(station)
-       deduct(MIN_BALANCE)
-     end
-
+     # if @journey.travelling? == false
+     #   deduct(PENALTY_CHARGE)
+     # else
+      deduct(fare)
+      @journey.end_journey(station) 
    end
 
 
