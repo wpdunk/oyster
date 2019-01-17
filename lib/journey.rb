@@ -15,8 +15,13 @@ class Journey
   end
 
   def travelling?
-    return !(@journey_list[-1][:exit_station]) if @journey_list.length > 0
-    return false
+    if @journey_list.length == 0
+      return false
+    elsif @journey_list.length > 0
+      return !(@journey_list[-1][:exit_station])
+    else
+      return false
+    end
   end
 
 

@@ -2,6 +2,7 @@ class Oystercard
 
   attr_reader :balance, :journey
 
+  PENALTY_CHARGE = 6
   MAX_BALANCE = 90
   MIN_BALANCE = 1
 
@@ -25,13 +26,19 @@ class Oystercard
 
   def touch_in(station)
     fail "balance too low" if @balance < MIN_BALANCE
+    deduct(PENALTY_CHARGE) if @journey.travelling?
     @journey.start_journey(station)
   end
 
   def touch_out(station)
-    deduct(MIN_BALANCE)
-    @journey.end_journey(station)
-  end
+     if @journey.travelling? == false
+       deduct(PENALTY_CHARGE)
+     else
+       @journey.end_journey(station)
+       deduct(MIN_BALANCE)
+     end
+
+   end
 
 
 private :add, :deduct

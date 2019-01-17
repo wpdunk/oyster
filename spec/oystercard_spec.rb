@@ -56,6 +56,12 @@ describe Oystercard do
       expect { subject.touch_in(entry_station) }.to raise_error "balance too low"
     end
 
+    it "charges £6 if touched in without touching out first" do
+      subject.topup(20)
+      subject.touch_in(entry_station)
+      expect { subject.touch_in(exit_station) }.to change{subject.balance}.by (Oystercard::PENALTY_CHARGE*(-1))
+    end
+
     it "stores the entry station in journey.journey.journey_list" do
       subject.topup(Oystercard::MIN_BALANCE)
       subject.touch_in(entry_station)
@@ -64,6 +70,15 @@ describe Oystercard do
   end
 
   describe "#touch_out" do
+    it "charges £6 if touched out with blank journey history" do
+      expect { subject.touch_out(exit_station) }.to change{subject.balance}.by (Oystercard::PENALTY_CHARGE*(-1))
+    end
+    it "charges £6 if touched out without touching in first" do
+      subject.topup(20)
+      subject.touch_in(entry_station)
+      subject.touch_out(entry_station)
+      expect { subject.touch_out(exit_station) }.to change{subject.balance}.by (Oystercard::PENALTY_CHARGE*(-1))
+    end
     it "reduces balance by correct amount" do
         subject.topup(Oystercard::MIN_BALANCE)
         subject.touch_in(entry_station)
