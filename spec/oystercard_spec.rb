@@ -56,17 +56,11 @@ describe Oystercard do
       expect { subject.touch_in(entry_station) }.to raise_error "balance too low"
     end
 
-    it "can remember the last station" do
-      subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(entry_station)
-      expect(subject.entry_station).to eq entry_station
-    end
-
     it "stores the entry station in journey_list" do
       subject.topup(Oystercard::MIN_BALANCE)
-      subject.touch_in(exit_station)
+      subject.touch_in(entry_station)
       # expect(subject.journey_list.fetch(:entries).pop).to eq (station)
-      expect(subject.entry_station).to eq exit_station
+      expect(subject.journey_list[-1][:entry_station]).to eq entry_station
     end
   end
 
@@ -92,7 +86,7 @@ describe Oystercard do
       subject.topup(Oystercard::MIN_BALANCE)
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
-      expect(subject.exit_station).to eq exit_station
+      expect(subject.journey_list[-1][:exit_station]).to eq exit_station
     end
   end
 

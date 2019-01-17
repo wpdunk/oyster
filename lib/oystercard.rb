@@ -7,7 +7,6 @@ class Oystercard
 
   def initialize
     @balance = 0
-    @entry_station
     @journey_list = []
   end
 
@@ -25,20 +24,19 @@ class Oystercard
   end
 
   def travelling?
-    !!entry_station
+    return !(@journey_list[-1][:exit_station]) if @journey_list.length > 0
+    return false
+    #@journey_list[-1].length == 1
   end
 
   def touch_in(station)
     fail "balance too low" if @balance < MIN_BALANCE
     @journey_list << {:entry_station => station}
-    @entry_station = station
   end
 
   def touch_out(station)
     deduct(MIN_BALANCE)
     @journey_list[-1][:exit_station] = station
-    @entry_station = nil
-    @exit_station = station
   end
 
 
