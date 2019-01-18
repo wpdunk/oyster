@@ -39,11 +39,8 @@ class Oystercard
   end
 
   def touch_out(station)
-     # if @journey.travelling? == false
-     #   deduct(PENALTY_CHARGE)
-     # else
       deduct(fare)
-      @journey.end_journey(station) 
+      @journey.end_journey(station)
    end
 
 
